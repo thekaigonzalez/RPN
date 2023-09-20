@@ -126,5 +126,10 @@ license:
     i decided to license THIS project under the "BSD 2-Clause License". you can
     read in LICENSE.
 
+btw:
 
-
+    rpn_Loperator() and rpn_Lop() are different things. rpn_Loperator() gets the
+    operator and pushes it as the last value in the state. rpn_Lop() will return
+    the value of the operator AND add it as the last value returned in the
+    state. just to let you know. dont fall for the okey-doke. never settle. be a
+    warrior! fight through the doom and gloom! >:(
