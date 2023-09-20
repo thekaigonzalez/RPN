@@ -133,3 +133,15 @@ btw:
     the value of the operator AND add it as the last value returned in the
     state. just to let you know. dont fall for the okey-doke. never settle. be a
     warrior! fight through the doom and gloom! >:(
+
+specs:
+    
+    -------------------------------------------------------------------------------
+    Language                     files          blank        comment           code
+    -------------------------------------------------------------------------------
+    C                               10             57             10            239
+    C/C++ Header                     3             27             18             49
+    make                             1              0              0              5
+    -------------------------------------------------------------------------------
+    SUM:                            14             84             28            293
+    -------------------------------------------------------------------------------
