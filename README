@@ -1,0 +1,130 @@
+rpn - reverse polish notation calculator in C
+
+what it is:
+
+    reverse polish notation is some random polish guys attempt at saying that all
+    orders of operations are terrible. essentially reverse polish notation (rpn)
+    is the practice of placing all of the numbers before their operator. 
+    This will leave you with equations looking less like:
+
+    1 + 2
+
+    and more like:
+
+    1 2 +
+
+    why it was invented and designed in this way? i dont know!
+    do i want to find out? hell no! but its a good challenge anyway.
+
+    bonus, comes with an entire REPL found in rpnapp.c
+    stitched together in 5 minutes, dont hate me okay?
+
+the basis:
+    
+    this rpn parser has 4 main facilities, all can be found at the start of rpn.h, 
+    its non-complicated code so it shouldn't be hard to find them, but essentially 
+    there are 4 main variables which are handled differently throughout the entire 
+    codebase. Those variables are showcased below:
+
+    ...
+
+        rpn_state_t __stat;  /* the state */
+        String __expr;       /* the expression */
+        rpn_number_t __res;  /* this is a float/int/whatever you set it to :) */
+        rpn_number_t __LAST; /* running functions to give you values, this value is
+                                used to view those values */
+
+    These values look a bit disgusting, so let me explain them all for you,
+    starting with the first one `__stat`, it just stands for state. This is the
+    state used by the parser/executor and will not be mainly accessable to the
+    userland. 
+    
+    Next up we have `__expr`, which as you can see from the comment is the
+    EXPRESSION that will be parsed. You will not have to worry about this
+    variable that much throughout your program, only ensuring that it is
+    actually assigned to, with a valid string in memory, or else you will have
+    to be dealing with some ugly memory errors (see limits & libraries below)
+
+    The third value is called `__res`, which essentially just stands for the
+    result of the expression. this variable will ONLY be changed when you decide
+    to actually run the code you already pushed into the variable. seems simple
+    enough.
+    
+    Last but not least, probably the most yet least complicated variable is
+    `__LAST`, this variable stands for the LAST value given by a function. This
+    was a solution to using `return` all the time, each time you run a function
+    the value is not returned by the actual functions, instead stored in that
+    variable. This helps with pushing multiple values and popping (fake popping)
+    them as well.
+
+barebones rpn calculation:
+
+    #include "rpn.h"
+
+    int
+    main ()
+    {
+        rpnState s;        /* declare state */
+        rpn_newstate (&s); /* initialize rpn state */
+
+        rpn_Lpush (&s, "5 5 +"); /* push a statement */
+
+        rpn_Lexec (&s);
+
+        rpn_free(&s);
+    }
+
+explanation for previous section:
+
+    The RPN framework works in a very simple manner, you declare the state, you
+    initialize it, you push the (rpn) statement you wish to calculate into it,
+    you execute it, you free it. why does this work? because it just does. you
+    can look through the code for a better reason than my terrible thought
+    process but for now that's what you're getting. it just works. dude.
+
+    (limits & libraries):
+        All states have an allocated `String` object attached to them. This `String`
+        is given by my recently designed C `String` library, which made this entire
+        process 100% easier. as a matter of fact, without the `String` library
+        this program would have been much slower, but since i didn't need to
+        worry about allocating really anything when it came to any sort of text
+        buffering, the entire process was finished in around an hour or two.
+
+        As for limits (as the header suggests) they are defined in multiple
+        files. this algorithm does not change the C `String` limits, nor gives
+        higher values which you can configure in `rpnconfig.h` and `string.h`.
+
+the buffer nightmare:
+    
+    this wasn't even a damn nightmare.
+
+    essentially all i did was read the inp expression character by character ->
+    and as i did that i added them to the temporary string that i also created.
+    whenever there was a string, i cleared the temporary string and added it to
+    the number array that i made as well in order to store numbers as strings to
+    be converted later. this process continues until the end of the entire
+    string.
+    
+    HOWEVER, however; once there is a symbol, it will do some crazy magic which
+    isn't magic but i wanted to say it was in order to take all of the char*
+    numbers in the array and convert them all to integers using atoi(s) - this
+    is the part im kinda proud of, because it's surprisingly efficient in
+    converting them, then sending them to rpn_Vcalc(s, nz, sz) to push the
+    result to the __LAST variable.
+
+    i made sure this was as flexible as possible to add things like multiple
+    statements on one line, etc. but im not doing that right now or probably any
+    time in the future.
+
+challenges:
+
+    try to make this like. faster because my code went from 0.001 to 0.004 in
+    speed.
+    
+license:
+
+    i decided to license THIS project under the "BSD 2-Clause License". you can
+    read in LICENSE.
+
+
+
